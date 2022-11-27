@@ -1,0 +1,38 @@
+version: "3.3"
+
+services:
+  app:
+    # build:
+    #   context: ./website
+    #   dockerfile: 'Dockerfile'
+    # ports:
+    #   - '3000:80'
+    # volumes:
+    #   - ./website:/frontend
+    
+    image: "node:16-alpine"    
+    volumes:
+      - "./website:/app"
+    command: ['npm','run','start']
+    working_dir: /app    
+    ports:
+      - "3000:3000"
+    # image: "traefik/whoami"
+
+    container_name: "simple-service"
+    expose:
+      - 3000
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.app.rule=Host(`<domain name>`)"
+      - "traefik.http.routers.app.entrypoints=websecure"
+      - "traefik.http.routers.app.tls.certresolver=myresolver"
+    networks:
+      - traefik-public
+
+    # mem_limit: 1000m
+
+networks:
+  traefik-public:
+    external: true
+  
